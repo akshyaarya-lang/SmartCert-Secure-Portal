@@ -1,9 +1,11 @@
 <input type="email" id="email" placeholder="Enter your email">
 <button onclick="verify()">Verify & Download</button>
-<div id="result"></div>
+
+<div id="result" style="margin-top:10px;font-weight:bold;"></div>
 
 <script>
-const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbwKy4rZjMCZaWfbN3QPkMqENRPkxwYwyN4KaRUYPCR6Lftbo6amCynXDkD1cBVWEUM/exec";
+const WEBAPP_URL =
+  "https://script.google.com/macros/s/AKfycbwKy4rZjMCZaWfbN3QPkMqENRPkxwYwyN4KaRUYPCR6Lftbo6amCynXDkD1cBVWEUM/exec";
 
 function verify() {
   const email = document.getElementById("email").value.trim();
@@ -16,52 +18,40 @@ function verify() {
     return;
   }
 
+  result.innerText = "⏳ Verifying...";
+
   fetch(WEBAPP_URL, {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/x-www-form-urlencoded"
-  },
-  body: "email=" + encodeURIComponent(email)
-})
-.then(response => {
-  if (!response.ok) {
-    throw new Error("Network response was not ok");
-  }
-  return response.text();   // 👈 JSON nahi, pehle TEXT
-})
-.then(text => {
-  console.log("RAW RESPONSE:", text);  // 👈 SAB KUCH DIKHEGA
-  const data = JSON.parse(text);
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded"
+    },
+    body: "email=" + encodeURIComponent(email)
+  })
+    .then(response => response.text()) // 👈 pehle RAW text
+    .then(text => {
+      console.log("RAW RESPONSE:", text);
 
-  if (data.status === "success" && data.downloadUrl) {
-    result.innerHTML =
-      "✅ Verified<br><br>" +
-      "<a href='" + data.downloadUrl + "' target='_blank'>" +
-      "⬇ Download Certificate</a>";
-  } else {
-    result.innerText = "❌ " + (data.message || "Invalid response");
-  }
-})
-.catch(err => {
-  console.error(err);
-  result.innerText = "❌ Server error";
-});
-  .then(r => r.json())
-  .then(data => {
-  console.log(data); // 👈 VERY IMPORTANT
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch (e) {
+        throw new Error("Invalid JSON from server");
+      }
 
-  if (data.status === "success" && data.downloadUrl) {
-
-    result.innerHTML =
-      "✅ Verified<br><br>" +
-      "<a href='" + data.downloadUrl + "' target='_blank' rel='noopener'>" +
-      "⬇ Download Certificate</a>";
-
-  } else {
-    result.innerText = "❌ Invalid download link";
-  }
-});
-
-
+      if (data.status === "success" && data.downloadUrl) {
+        result.innerHTML = `
+          ✅ Verified<br><br>
+          <a href="${data.downloadUrl}" target="_blank" rel="noopener">
+            ⬇ Download Certificate
+          </a>
+        `;
+      } else {
+        result.innerText = "❌ " + (data.message || "Invalid email");
+      }
+    })
+    .catch(err => {
+      console.error(err);
+      result.innerText = "❌ Server error";
+    });
 }
 </script>
