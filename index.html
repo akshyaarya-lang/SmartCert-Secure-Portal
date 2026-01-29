@@ -23,17 +23,15 @@ function verify() {
   })
   .then(r => r.json())
   .then(data => {
-    if (data.status === "success") {
-      result.innerHTML =
-        "✅ Verified<br><br>" +
-        "<a href='" + data.downloadUrl + "' target='_blank'>" +
-        "⬇ Download Certificate</a>";
-    } else {
-      result.innerText = "❌ " + data.message;
-    }
-  })
-  .catch(() => {
-    result.innerText = "❌ Server error";
-  });
+  if (data.status === "success") {
+    result.innerHTML =
+      "✅ Verified<br><br>" +
+      "<a href='" + data.downloadUrl + "' target='_blank' style='font-weight:bold'>" +
+      "⬇ Download Certificate</a>";
+  } else {
+    result.innerText = "❌ " + data.message;
+  }
+});
+
 }
 </script>
