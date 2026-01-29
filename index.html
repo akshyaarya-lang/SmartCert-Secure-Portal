@@ -23,15 +23,20 @@ function verify() {
   })
   .then(r => r.json())
   .then(data => {
-  if (data.status === "success") {
+  console.log(data); // 👈 VERY IMPORTANT
+
+  if (data.status === "success" && data.downloadUrl) {
+
     result.innerHTML =
       "✅ Verified<br><br>" +
-      "<a href='" + data.downloadUrl + "' target='_blank' style='font-weight:bold'>" +
+      "<a href='" + data.downloadUrl + "' target='_blank' rel='noopener'>" +
       "⬇ Download Certificate</a>";
+
   } else {
-    result.innerText = "❌ " + data.message;
+    result.innerText = "❌ Invalid download link";
   }
 });
+
 
 }
 </script>
