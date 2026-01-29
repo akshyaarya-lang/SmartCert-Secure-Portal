@@ -1,48 +1,156 @@
-<input type="email" id="email" placeholder="Enter your email">
-<button onclick="verify()">Verify & Download</button>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>SmartCert Secure Portal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<div id="result" style="margin-top:10px;font-weight:bold;"></div>
+  <style>
+    body{
+      margin:0;
+      font-family:Segoe UI,sans-serif;
+      background:linear-gradient(120deg,#0f172a,#1e293b);
+      color:#fff;
+    }
+    .container{
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .card{
+      background:#0b1220;
+      padding:40px;
+      border-radius:16px;
+      width:420px;
+      max-width:90%;
+      box-shadow:0 0 30px rgba(0,0,0,0.5);
+    }
+    h1{
+      text-align:center;
+      margin-bottom:8px;
+    }
+    .brand{
+      text-align:center;
+      font-size:12px;
+      color:#94a3b8;
+      margin-bottom:20px;
+    }
+    input{
+      width:100%;
+      padding:14px;
+      border-radius:8px;
+      border:none;
+      outline:none;
+      margin-top:10px;
+      font-size:14px;
+    }
+    button{
+      width:100%;
+      padding:14px;
+      margin-top:15px;
+      border:none;
+      border-radius:8px;
+      background:#2563eb;
+      color:white;
+      font-size:15px;
+      cursor:pointer;
+    }
+    button:disabled{
+      background:#475569;
+      cursor:not-allowed;
+    }
+    button:hover:not(:disabled){
+      background:#1d4ed8;
+    }
+    #result{
+      margin-top:15px;
+      font-size:14px;
+      text-align:center;
+      min-height:20px;
+      word-break:break-word;
+    }
+    .loader{
+      margin-top:8px;
+      font-size:12px;
+      text-align:center;
+      color:#60a5fa;
+    }
+    .footer{
+      margin-top:25px;
+      text-align:center;
+      font-size:11px;
+      color:#94a3b8;
+    }
+  </style>
+</head>
+
+<body>
+<div class="container">
+  <div class="card">
+    <h1>🎓 SmartCert Portal</h1>
+    <div class="brand">Secure Certificate Verification System</div>
+
+    <input type="email" id="email" placeholder="Enter your registered email" required>
+    <button id="btn" onclick="verify()">Verify & Download</button>
+
+    <div id="result"></div>
+    <div id="loader" class="loader"></div>
+
+    <div class="footer">
+      <div>Developed by <b>AKSHAY-AI</b></div>
+      <div>Founder: <b>Akshay Arya</b></div>
+      <div style="margin-top:6px;">Secure • Verified • Trusted</div>
+    </div>
+  </div>
+</div>
 
 <script>
-const WEBAPP_URL =
-  "https://script.google.com/macros/s/AKfycbwKy4rZjMCZaWfbN3QPkMqENRPkxwYwyN4KaRUYPCR6Lftbo6amCynXDkD1cBVWEUM/exec";
+  // ✅ YOUR DEPLOYED APPS SCRIPT URL
+  const WEBAPP_URL =
+    "https://script.google.com/macros/s/AKfycbwKy4rZjMCZaWfbN3QPkMqENRPkxwYwyN4KaRUYPCR6Lftbo6amCynXDkD1cBVWEUM/exec";
 
-function verify() {
-  const email = document.getElementById("email").value.trim();
-  const result = document.getElementById("result");
+  function verify() {
+    const email = document.getElementById("email").value.trim();
+    const result = document.getElementById("result");
+    const loader = document.getElementById("loader");
+    const btn = document.getElementById("btn");
 
-  result.innerHTML = "";
+    result.innerHTML = "";
+    loader.innerText = "";
 
-  if (!email) {
-    result.innerText = "❌ Please enter email";
-    return;
-  }
+    if (!email) {
+      result.innerText = "❌ Please enter your registered email";
+      return;
+    }
 
-  result.innerText = "⏳ Verifying...";
+    btn.disabled = true;
+    loader.innerText = "🔐 Verifying secure access...";
 
-  fetch(WEBAPP_URL, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded"
-    },
-    body: "email=" + encodeURIComponent(email)
-  })
-    .then(response => response.text()) // 👈 pehle RAW text
+    fetch(WEBAPP_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: "email=" + encodeURIComponent(email)
+    })
+    .then(res => res.text())   // 👈 RAW response
     .then(text => {
       console.log("RAW RESPONSE:", text);
 
       let data;
       try {
         data = JSON.parse(text);
-      } catch (e) {
+      } catch {
         throw new Error("Invalid JSON from server");
       }
 
+      btn.disabled = false;
+      loader.innerText = "";
+
       if (data.status === "success" && data.downloadUrl) {
         result.innerHTML = `
-          ✅ Verified<br><br>
-          <a href="${data.downloadUrl}" target="_blank" rel="noopener">
-            ⬇ Download Certificate
+          ✅ Verified Securely<br><br>
+          <a href="${data.downloadUrl}" target="_blank"
+             style="color:#60a5fa;font-weight:bold">
+             ⬇ Download Certificate
           </a>
         `;
       } else {
@@ -51,7 +159,11 @@ function verify() {
     })
     .catch(err => {
       console.error(err);
+      btn.disabled = false;
+      loader.innerText = "";
       result.innerText = "❌ Server error";
     });
-}
+  }
 </script>
+</body>
+</html>
