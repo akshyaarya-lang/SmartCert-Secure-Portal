@@ -1,0 +1,39 @@
+<input type="email" id="email" placeholder="Enter your email">
+<button onclick="verify()">Verify & Download</button>
+<div id="result"></div>
+
+<script>
+const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbwoU6jeysLAegG3dpxZbO1eDLT2uswbtASzodFaKBCLTOcqsppZspiPhdv_ezphqMg/exec";
+
+function verify() {
+  const email = document.getElementById("email").value.trim();
+  const result = document.getElementById("result");
+
+  result.innerHTML = "";
+
+  if (!email) {
+    result.innerText = "❌ Please enter email";
+    return;
+  }
+
+  fetch(WEBAPP_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: "email=" + encodeURIComponent(email)
+  })
+  .then(r => r.json())
+  .then(data => {
+    if (data.status === "success") {
+      result.innerHTML =
+        "✅ Verified<br><br>" +
+        "<a href='" + data.downloadUrl + "' target='_blank'>" +
+        "⬇ Download Certificate</a>";
+    } else {
+      result.innerText = "❌ " + data.message;
+    }
+  })
+  .catch(() => {
+    result.innerText = "❌ Server error";
+  });
+}
+</script>
