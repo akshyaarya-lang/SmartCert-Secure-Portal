@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
+    
     body{
       margin:0;
       font-family:Segoe UI,sans-serif;
@@ -81,6 +82,17 @@
       font-size:11px;
       color:#94a3b8;
     }
+   .form{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+
+.form input,
+.form button{
+  width:100%;
+  max-width:260px;   /* 👈 perfectly centered look */
+}
   </style>
 </head>
 
@@ -90,9 +102,10 @@
     <h1>🎓 SmartCert Portal</h1>
     <div class="brand">Secure Certificate Verification System</div>
 
-    <input type="email" id="email" placeholder="Enter your registered email" required>
-    <button id="btn" onclick="verify()">Verify & Download</button>
-
+    <div class="form">
+  <input type="email" id="email" placeholder="Enter your registered email" required>
+  <button id="btn" onclick="verify()">Verify & Download</button>
+</div>
     <div id="result"></div>
     <div id="loader" class="loader"></div>
 
